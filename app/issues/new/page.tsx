@@ -26,6 +26,17 @@ const NewIssuePage = () => {
   });
   const [error, setError] = useState("");
   const [isSubmiting, setSubmition] = useState(false);
+
+  const onSubmit = handleSubmit(async (data) => {
+    try {
+      setSubmition(true);
+      await axios.post("/api/issues", data);
+      router.push("/issues");
+    } catch (error) {
+      setSubmition(false);
+      setError("An unexpected error ocured");
+    }
+  });
   return (
     <div className="max-w-xl space-y-3">
       {error && (
@@ -36,19 +47,7 @@ const NewIssuePage = () => {
           <Callout.Text>{error}</Callout.Text>
         </Callout.Root>
       )}
-      <form
-        className="space-y-3"
-        onSubmit={handleSubmit(async (data) => {
-          try {
-            setSubmition(true);
-            await axios.post("/api/issues", data);
-            router.push("/issues");
-          } catch (error) {
-            setSubmition(false);
-            setError("An unexpected error ocured");
-          }
-        })}
-      >
+      <form className="space-y-3" onSubmit={onSubmit}>
         <TextField.Root
           placeholder="Add issue title..."
           {...register("title")}
