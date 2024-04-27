@@ -13,15 +13,9 @@ import {
   Flex,
   Text,
 } from "@radix-ui/themes";
+import { Skeleton, Spinner } from "./components";
 
 const NavBar = () => {
-  const currentPath = usePathname();
-  const { status, data: session } = useSession();
-
-  const links = [
-    { label: "Dashboard", href: "/" },
-    { label: "Issues", href: "/issues" },
-  ];
   return (
     <nav>
       <Container>
@@ -38,52 +32,74 @@ const NavBar = () => {
             <Link href={"/"}>
               <FaBugs className="object-fill" size={25} />
             </Link>
-            <ul className="flex space-x-6">
-              {links.map((link, index) => (
-                <li key={index}>
-                  <Link
-                    href={link.href}
-                    className={classnames({
-                      "text-zinc-900": link.href === currentPath,
-                      "text-zinc-500": link.href !== currentPath,
-                      "hover:text-zinc-800 transition-colors": true,
-                    })}
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+            <NavLinks />
           </Flex>
-          <Box>
-            {status === "authenticated" && (
-              <DropdownMenu.Root>
-                <DropdownMenu.Trigger>
-                  <Avatar
-                    src={session.user!.image!}
-                    fallback="?"
-                    size="2"
-                    className="cursor-pointer"
-                  />
-                </DropdownMenu.Trigger>
-                <DropdownMenu.Content>
-                  <DropdownMenu.Label>
-                    <Text size="2">{session.user!.email}</Text>
-                  </DropdownMenu.Label>
-                  <DropdownMenu.Item>
-                    <Link href={"/api/auth/signout"}>Log out</Link>
-                  </DropdownMenu.Item>
-                </DropdownMenu.Content>
-              </DropdownMenu.Root>
-            )}
-            {status === "unauthenticated" && (
-              <Link href={"/api/auth/signin"}>Log in</Link>
-            )}
-          </Box>
+          <AuthStatus />
         </Flex>
       </Container>
     </nav>
   );
+};
+
+const NavLinks = () => {
+  const currentPath = usePathname();
+
+  const links = [
+    { label: "Dashboard", href: "/" },
+    { label: "Issues", href: "/issues" },
+  ];
+  return (
+    <ul className="flex space-x-6">
+      {links.map((link, index) => (
+        <li key={index}>
+          <Link
+            href={link.href}
+            className={classnames({
+              "nav-link": true,
+              "!text-zinc-900": link.href === currentPath,
+            })}
+          >
+            {link.label}
+          </Link>
+        </li>
+      ))}
+    </ul>
+  );
+};
+export const AuthStatus = () => {
+  const { status, data: session } = useSession();
+  if (status === "loading") return <Skeleton width={35} height={35} />;
+  if (status === "unauthenticated")
+    return (
+      <Link href={"/api/auth/signin"} className="nav-link">
+        Log in
+      </Link>
+    );
+  if (status === "authenticated")
+    return (
+      <Box>
+        {status === "authenticated" && (
+          <DropdownMenu.Root>
+            <DropdownMenu.Trigger>
+              <Avatar
+                src={session.user!.image!}
+                fallback="?"
+                size="2"
+                className="cursor-pointer"
+              />
+            </DropdownMenu.Trigger>
+            <DropdownMenu.Content>
+              <DropdownMenu.Label>
+                <Text size="2">{session.user!.email}</Text>
+              </DropdownMenu.Label>
+              <DropdownMenu.Item>
+                <Link href={"/api/auth/signout"}>Log out</Link>
+              </DropdownMenu.Item>
+            </DropdownMenu.Content>
+          </DropdownMenu.Root>
+        )}
+      </Box>
+    );
 };
 
 export default NavBar;
