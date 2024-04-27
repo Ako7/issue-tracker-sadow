@@ -13,7 +13,7 @@ import {
   Flex,
   Text,
 } from "@radix-ui/themes";
-import { Skeleton, Spinner } from "./components";
+import { Skeleton } from "./components";
 
 const NavBar = () => {
   return (
