@@ -3,9 +3,9 @@ import Link from "next/link";
 import React from "react";
 import IssueStatusFilter from "./IssueStatusFilter";
 
-const AddIssueButton = () => {
+const IssueToolbar = () => {
   return (
-    <Flex mb="3" justify="between">
+    <Flex justify="between">
       <IssueStatusFilter />
       <Button>
         <Link href={"/issues/new"}>Add new Issue</Link>
@@ -14,4 +14,4 @@ const AddIssueButton = () => {
   );
 };
 
-export default AddIssueButton;
+export default IssueToolbar;
